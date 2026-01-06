@@ -11,6 +11,13 @@ import { getRecentAppointmentList } from "@/lib/actions/appointment.actions";
 const AdminPage = async () => {
   const appointments = await getRecentAppointmentList();
 
+  // --- SAFE DATA HANDLING ---
+  // If appointments is undefined, we default to 0 and an empty array
+  const scheduledCount = appointments?.scheduledCount || 0;
+  const pendingCount = appointments?.pendingCount || 0;
+  const cancelledCount = appointments?.cancelledCount || 0;
+  const documents = appointments?.documents || [];
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col space-y-14">
       <header className="admin-header">
@@ -38,25 +45,26 @@ const AdminPage = async () => {
         <section className="admin-stat">
           <StatCard
             type="appointments"
-            count={appointments.scheduledCount}
+            count={scheduledCount}
             label="Scheduled appointments"
             icon={"/assets/icons/appointments.svg"}
           />
           <StatCard
             type="pending"
-            count={appointments.pendingCount}
+            count={pendingCount}
             label="Pending appointments"
             icon={"/assets/icons/pending.svg"}
           />
           <StatCard
             type="cancelled"
-            count={appointments.cancelledCount}
+            count={cancelledCount}
             label="Cancelled appointments"
             icon={"/assets/icons/cancelled.svg"}
           />
         </section>
 
-        <DataTable columns={columns} data={appointments.documents} />
+        {/* Pass the safe documents array here */}
+        <DataTable columns={columns} data={documents} />
       </main>
     </div>
   );
